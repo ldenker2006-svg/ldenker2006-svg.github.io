@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#500000">
+    <title>IHSA Team Fitness</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <img src="assets/AggieIHSALogo.webp" alt="Texas A&M IHSA Equestrian" class="brand-mark">
+          <div>
+            <p class="eyebrow">Aggie IHSA</p>
+            <h1>Team Fitness</h1>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="signInButton" class="google-button" type="button">
+            <span class="google-g" aria-hidden="true">G</span>
+            <span id="signInButtonText">Sign in with Google</span>
+          </button>
+          <p id="signedInStatus" class="signed-in-status">Not signed in</p>
+        </div>
+      </header>
+
+      <main>
+        <section id="homePage" class="page active">
+          <section class="hero-panel">
+            <div>
+              <p class="eyebrow" id="homeDate">Monday 08/31</p>
+              <h2 id="homeWorkout">Strength A</h2>
+              <p id="homeSummary">Today is a strength day. Use the comparison below before logging your work.</p>
+            </div>
+            <button class="primary-action" data-jump="strength" type="button">Log strength</button>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Last Matching Workout</p>
+                <h2 id="previousTitle">Previous Strength A</h2>
+              </div>
+              <span id="previousBadge" class="badge">No previous log</span>
+            </div>
+            <div id="previousSummary" class="previous-grid"></div>
+          </section>
+
+          <section class="panel compact-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Current Workout</p>
+                <h2>Today's plan</h2>
+              </div>
+              <button class="ghost-button" data-jump="calendar" type="button">Open calendar</button>
+            </div>
+            <div id="homeExerciseList" class="exercise-list"></div>
+          </section>
+        </section>
+
+        <section id="calendarPage" class="page">
+          <section class="panel program-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="weekRange">08/31 - 09/04</p>
+                <h2 id="weekTitle">Week One</h2>
+              </div>
+              <div class="program-note">Auto-matched to today</div>
+            </div>
+            <div id="dayGrid" class="day-grid" aria-label="Weekly workouts"></div>
+          </section>
+
+          <section class="panel workout-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="selectedDate">Monday 08/31</p>
+                <h2 id="selectedWorkout">Strength A</h2>
+              </div>
+              <span id="workoutBadge" class="badge">Strength</span>
+            </div>
+            <div id="exerciseList" class="exercise-list"></div>
+          </section>
+        </section>
+
+        <section id="strengthPage" class="page">
+          <section class="panel logger-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="loggerDate">Monday 08/31</p>
+                <h2 id="loggerTitle">Strength Tracker</h2>
+              </div>
+              <div class="logger-actions">
+                <button id="finishWorkout" class="primary-action" type="button">Finish workout</button>
+                <button id="clearDay" class="ghost-button danger" type="button">Clear day</button>
+              </div>
+            </div>
+            <p class="helper-copy">Enter weight and reps for each set. Reps can vary by set, such as 7, 7, and 6.</p>
+            <div id="logList" class="log-list"></div>
+            <label class="photo-field">
+              <span>Workout photo</span>
+              <input id="workoutPhoto" type="file" accept="image/*">
+            </label>
+            <div id="photoPreview" class="photo-preview hidden"></div>
+            <div class="save-row">
+              <span id="saveStatus">Saved on this device</span>
+              <button id="exportLogs" type="button">Export logs</button>
+            </div>
+          </section>
+
+          <section id="restPanel" class="panel rest-panel hidden">
+            <h2>No workout log needed</h2>
+            <p>No team workout is scheduled today. The tracker will reopen automatically on the next workout day.</p>
+            <button class="primary-action" data-jump="calendar" type="button">Open calendar</button>
+          </section>
+        </section>
+
+        <section id="teamPage" class="page">
+          <section class="hero-panel team-hero">
+            <div>
+              <p class="eyebrow">Team Feed</p>
+              <h2>Recent Work</h2>
+              <p>See when teammates log a workout and send a quick thumbs-up.</p>
+            </div>
+            <div class="team-stat">
+              <strong id="teamLogCount">0</strong>
+              <span>logged workouts</span>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Teammate Activity</p>
+                <h2>Workout logs</h2>
+              </div>
+              <button id="clearTeamFeed" class="ghost-button danger" type="button">Clear feed</button>
+            </div>
+            <div id="teamFeed" class="team-feed"></div>
+          </section>
+        </section>
+      </main>
+      <nav class="app-nav" aria-label="App pages">
+        <button class="nav-button active" data-page="home" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3Z"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-button" data-page="calendar" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v3h6V2h2v3h3v17H4V5h3Zm11 8H6v10h12Z"/></svg>
+          <span>Calendar</span>
+        </button>
+        <button class="nav-button" data-page="strength" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9H3v6h2v3h4V6H5Zm14 0V6h-4v12h4v-3h2V9Zm-8-1h2v8h-2Z"/></svg>
+          <span>Track</span>
+        </button>
+        <button class="nav-button" data-page="team" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm8.5 1a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM2 21c.4-4.2 2.7-7 6-7s5.6 2.8 6 7Zm11.4 0c-.2-1.9-.9-3.6-2-5 1-.8 2.3-1.2 3.8-1.2 3 0 5.1 2.4 5.5 6.2Z"/></svg>
+          <span>Team</span>
+        </button>
+      </nav>
+      <div id="celebration" class="celebration hidden" role="status" aria-live="polite">Gig 'em! Workout logged.</div>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="app.js"></script>
+  </body>
+</html>
