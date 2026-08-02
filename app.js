@@ -964,7 +964,7 @@ function demoVisualMarkup(exercise, guide) {
 function demoImageForExercise(exerciseName) {
   if (demoImages[exerciseName]) return demoImages[exerciseName];
   const guide = demoGuides[exerciseName];
-  return guide?.image ? `assets/demos/${guide.image}` : "assets/AggieIHSALogo.webp";
+  return guide?.image ? `${guide.image}` : "AggieIHSALogo.webp";
 }
 
 function normalizeWorkoutLibrary(library) {
