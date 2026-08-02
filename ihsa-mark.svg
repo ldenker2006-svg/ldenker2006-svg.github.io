@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="IHSA fitness mark">
+  <rect width="128" height="128" rx="18" fill="#500000"/>
+  <path d="M28 76c11-20 25-32 44-36 12-2 22 0 31 6 3 2 3 7 0 9l-10 7 8 18H88l-7-13H55l-9 13H32l12-18c-7 3-12 8-16 14Z" fill="#ffffff"/>
+  <path d="M73 40c0-10 7-18 17-20 3 9 0 18-8 24Z" fill="#d6c3a3"/>
+  <path d="M42 80h52" stroke="#d6c3a3" stroke-width="7" stroke-linecap="round"/>
+</svg>

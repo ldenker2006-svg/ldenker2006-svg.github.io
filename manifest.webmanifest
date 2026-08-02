@@ -1,0 +1,17 @@
+{
+  "name": "IHSA Team Fitness",
+  "short_name": "IHSA Fitness",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f4f1",
+  "theme_color": "#500000",
+  "description": "Mobile fitness calendar and strength log for a collegiate equestrian team.",
+  "icons": [
+    {
+      "src": "assets/AggieIHSALogo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
