@@ -8,7 +8,7 @@
   "description": "Mobile fitness calendar and strength log for a collegiate equestrian team.",
   "icons": [
     {
-      "src": "assets/AggieIHSALogo.webp",
+      "src": "AggieIHSALogo.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any maskable"
