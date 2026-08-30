@@ -1995,3 +1995,58 @@ function enableRealtimeTeamSync() {
 }
 
 enableRealtimeTeamSync();
+
+
+
+// Some privacy tools block Firebase's persistent socket. Keep REST sync available for those browsers.
+let realtimeUnavailable = false;
+let fallbackPollTimer = 0;
+
+async function fallbackLoadSharedState() {
+  try {
+    const response = await fetch(sharedSyncEndpoint(), { cache: "no-store" });
+    if (!response.ok) throw new Error("Sync returned " + response.status);
+    const data = await response.json();
+    if (data) applySharedPayload(data);
+    else await fallbackSaveSharedState();
+    syncStatus = "Team sync connected";
+    render();
+  } catch (error) {
+    syncStatus = "Team sync unavailable";
+    renderTeamFeed();
+  }
+}
+
+async function fallbackSaveSharedState() {
+  const response = await fetch(sharedSyncEndpoint(), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sharedPayload())
+  });
+  if (!response.ok) throw new Error("Sync returned " + response.status);
+}
+
+saveSharedState = async function () {
+  try {
+    if (realtimeTeamRef && !realtimeUnavailable) {
+      await realtimeTeamRef.transaction((remote) => mergeTeamPayload(remote, sharedPayload()));
+    } else {
+      await fallbackSaveSharedState();
+    }
+    syncStatus = "Team sync connected";
+    renderTeamFeed();
+  } catch (error) {
+    syncStatus = "Team sync unavailable";
+    renderTeamFeed();
+  }
+};
+
+loadSharedState = fallbackLoadSharedState;
+
+if (realtimeTeamRef) {
+  realtimeTeamRef.on("value", () => {}, () => {
+    realtimeUnavailable = true;
+    fallbackLoadSharedState();
+    if (!fallbackPollTimer) fallbackPollTimer = window.setInterval(fallbackLoadSharedState, SYNC_POLL_MS);
+  });
+}
