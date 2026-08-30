@@ -43,6 +43,8 @@
                 <input id="accountPhotoInput" type="file" accept="image/*">
               </label>
               <div id="accountNotifications" class="account-notifications"></div>
+              <button id="enableNotifications" class="ghost-button" type="button">Enable browser notifications</button>
+              <p id="notificationStatus" class="account-email">Notifications are off on this device.</p>
               <button id="logOutButton" class="ghost-button danger" type="button">Log out</button>
             </div>
           </details>
@@ -408,6 +410,8 @@
     </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
