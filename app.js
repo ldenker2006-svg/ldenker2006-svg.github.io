@@ -1,6 +1,5 @@
 const GOOGLE_CLIENT_ID = "";
-const TEAM_SYNC_URL = ""; // Add a Firebase Realtime Database URL here to share logs across devices.
-const TEAM_SYNC_ID = "aggie-ihsa";
+const TEAM_SYNC_URL = "[https://ihsa-fitness-app-default-rtdb.firebaseio.com/](https://ihsa-fitness-app-default-rtdb.firebaseio.com)";
 const SYNC_POLL_MS = 15000;
 const DEFAULT_COORDINATOR_EMAIL = "ldenker2006@gmail.com";
 const WORKOUT_TYPES = ["Strength A", "Endurance", "Power", "Mobility", "Strength B"];
