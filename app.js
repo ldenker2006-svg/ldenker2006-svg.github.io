@@ -1926,3 +1926,72 @@ window.setInterval(() => {
 }, 60000);
 initializeSharedSync();
 initializeFirebaseMessaging();
+
+
+
+// Firebase Realtime Database keeps all devices on the same team feed immediately.
+let realtimeTeamRef = null;
+
+function mergeSharedItems(remoteItems = [], localItems = [], limit = 0) {
+  const byId = new Map();
+  [...remoteItems, ...localItems].forEach((item) => {
+    if (!item || !item.id) return;
+    const previous = byId.get(item.id);
+    byId.set(item.id, previous ? { ...previous, ...item, cheers: Array.from(new Set([...(previous.cheers || []), ...(item.cheers || [])])) } : item);
+  });
+  const items = Array.from(byId.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  return limit ? items.slice(0, limit) : items;
+}
+
+function mergeTeamPayload(remote, local) {
+  const saved = remote && typeof remote === "object" ? remote : {};
+  return {
+    ...saved,
+    ...local,
+    users: { ...(saved.users || {}), ...(local.users || {}) },
+    teamFeed: mergeSharedItems(saved.teamFeed || [], local.teamFeed || [], 60),
+    buddies: mergeSharedItems(saved.buddies || [], local.buddies || []),
+    announcements: mergeSharedItems(saved.announcements || [], local.announcements || [], 20),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+saveSharedState = async function () {
+  if (!realtimeTeamRef) return;
+  try {
+    await realtimeTeamRef.transaction((remote) => mergeTeamPayload(remote, sharedPayload()));
+    syncStatus = "Team sync connected";
+    renderTeamFeed();
+  } catch (error) {
+    syncStatus = "Team sync unavailable";
+    renderTeamFeed();
+  }
+};
+
+loadSharedState = async function () {};
+
+function enableRealtimeTeamSync() {
+  if (!window.firebase || typeof firebase.database !== "function") return;
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    realtimeTeamRef = firebase.database().ref("teams/" + TEAM_SYNC_ID);
+    realtimeTeamRef.on("value", (snapshot) => {
+      const team = snapshot.val();
+      if (!team) {
+        scheduleSharedSync();
+        return;
+      }
+      applySharedPayload(team);
+      syncStatus = "Team sync connected";
+      render();
+    }, () => {
+      syncStatus = "Team sync unavailable";
+      renderTeamFeed();
+    });
+  } catch (error) {
+    syncStatus = "Team sync unavailable";
+    renderTeamFeed();
+  }
+}
+
+enableRealtimeTeamSync();
