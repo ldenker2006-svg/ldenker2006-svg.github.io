@@ -34,7 +34,7 @@
                   <p class="eyebrow">Account Details</p>
                   <h2 id="accountPanelName">Rider</h2>
                 </div>
-                <span id="accountPanelBadge" class="badge">No badge</span>
+                <span id="accountPanelBadge" class="badge">0 pts</span>
               </div>
               <p id="accountEmail" class="account-email"></p>
               <div id="accountBadgeList" class="badge-list"></div>
@@ -44,41 +44,6 @@
               </label>
               <div id="accountNotifications" class="account-notifications"></div>
               <button id="logOutButton" class="ghost-button danger" type="button">Log out</button>
-            </div>
-          </details>
-          <details id="coordinatorMenu" class="coordinator-menu hidden">
-            <summary>Coordinator</summary>
-            <div class="coordinator-panel">
-              <div class="section-head mini-head">
-                <div>
-                  <p class="eyebrow">Admin Tools</p>
-                  <h2>Fitness Coordinator</h2>
-                </div>
-                <span id="coordinatorBadge" class="badge">Admin</span>
-              </div>
-              <label class="admin-field">
-                <span>Transfer to signed-in account</span>
-                <select id="coordinatorAccountSelect"></select>
-              </label>
-              <button id="transferCoordinator" class="ghost-button" type="button">Transfer role</button>
-              <label class="admin-field">
-                <span>Announcement</span>
-                <textarea id="announcementText" rows="4" placeholder="Workout scheduling, events, reminders..."></textarea>
-              </label>
-              <button id="sendAnnouncement" class="primary-action" type="button">Post announcement</button>
-              <label class="admin-field">
-                <span>Edit workout</span>
-                <select id="adminWorkoutSelect"></select>
-              </label>
-              <div id="exerciseEditor" class="exercise-editor"></div>
-              <button id="saveExercises" class="primary-action" type="button">Save exercises</button>
-              <div class="admin-divider"></div>
-              <div>
-                <p class="eyebrow">Demo Images</p>
-                <h3 class="admin-subhead">Movement cards</h3>
-              </div>
-              <div id="demoImageEditor" class="demo-image-editor"></div>
-              <button id="exportTeamCsv" class="ghost-button" type="button">Export Team Logs</button>
             </div>
           </details>
         </div>
@@ -103,6 +68,17 @@
               <p id="homeSummary">Choose a workout type, then log your sets, weight, and reps.</p>
             </div>
             <button class="primary-action" data-jump="strength" type="button">Log workout</button>
+          </section>
+
+          <section class="panel compact-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">My Points</p>
+                <h2 id="myPointsTitle">Year total</h2>
+              </div>
+              <span id="myPointsBadge" class="badge">0 pts</span>
+            </div>
+            <p id="myPointsSummary" class="helper-copy">Sign in to see your individual point count.</p>
           </section>
 
           <section class="panel">
@@ -171,7 +147,7 @@
                 <h2 id="loggerTitle">Strength Tracker</h2>
               </div>
               <div class="logger-actions">
-                <button id="finishWorkout" class="primary-action" type="button">Finish workout</button>
+                <button id="exportLogs" type="button">Export logs</button>
                 <button id="clearDay" class="ghost-button danger" type="button">Clear day</button>
               </div>
             </div>
@@ -179,16 +155,68 @@
               <span>Workout type</span>
               <select id="workoutTypeSelect"></select>
             </label>
+            <div id="cardioOptions" class="cardio-options hidden">
+              <label class="workout-select-field">
+                <span>Endurance activity</span>
+                <select id="cardioActivitySelect">
+                  <option value="Programmed Endurance Workout">Programmed Endurance Workout</option>
+                  <option value="Running">Running</option>
+                  <option value="Biking">Biking</option>
+                  <option value="Swimming">Swimming</option>
+                  <option value="Pilates">Pilates</option>
+                  <option value="Extra Riding Lesson">Extra Riding Lesson</option>
+                  <option value="Other Cardio">Other Cardio</option>
+                </select>
+              </label>
+              <label id="customCardioField" class="workout-select-field hidden">
+                <span>Custom cardio activity</span>
+                <input id="customCardioActivity" type="text" placeholder="Trail ride, rowing, stairs...">
+              </label>
+              <div id="cardioMetricFields" class="cardio-metrics hidden">
+                <label>
+                  <span>Duration</span>
+                  <input id="cardioDuration" type="number" min="0" step="1" inputmode="numeric" placeholder="minutes">
+                </label>
+                <label>
+                  <span>Distance</span>
+                  <input id="cardioDistance" type="number" min="0" step="0.1" inputmode="decimal" placeholder="optional">
+                </label>
+              </div>
+            </div>
+            <details id="customStrengthPanel" class="custom-strength-panel">
+              <summary>Create your own strength workout</summary>
+              <div class="custom-strength-grid">
+                <label class="workout-select-field">
+                  <span>Workout name</span>
+                  <input id="customStrengthName" type="text" placeholder="My upper body lift">
+                </label>
+                <label class="workout-select-field full-span">
+                  <span>Exercises: name | sets | reps/time | starting range</span>
+                  <textarea id="customStrengthExercises" rows="5" placeholder="Goblet Squat | 3 | 8-10 | Start: 15-30 lb&#10;Lat Pulldown | 3 | 8-12 | Start: 30-60 lb"></textarea>
+                </label>
+                <button id="saveCustomStrength" class="primary-action" type="button">Use custom workout</button>
+              </div>
+            </details>
+            <section class="tracking-tools" aria-label="Workout tracking tools">
+              <div>
+                <p class="eyebrow">Live Tracking</p>
+                <strong id="timerDisplay">00:00</strong>
+              </div>
+              <div class="tracking-actions">
+                <button id="workoutTimerButton" class="ghost-button" type="button">Start timer</button>
+                <button id="shareLocationButton" class="ghost-button" type="button">Share live location</button>
+              </div>
+              <span id="locationStatus">Location not shared</span>
+            </section>
             <p class="helper-copy">Enter weight and reps for each set. Reps can vary by set, such as 7, 7, and 6.</p>
             <div id="logList" class="log-list"></div>
-            <label class="photo-field">
-              <span>Workout photo</span>
-              <input id="workoutPhoto" type="file" accept="image/*">
+            <label class="description-field">
+              <span>Team post description</span>
+              <textarea id="workoutDescription" rows="4" placeholder="How did it go? Add notes for the team feed..."></textarea>
             </label>
-            <div id="photoPreview" class="photo-preview hidden"></div>
             <div class="save-row">
               <span id="saveStatus">Saved on this device</span>
-              <button id="exportLogs" type="button">Export logs</button>
+              <button id="finishWorkout" class="primary-action" type="button">Finish workout</button>
             </div>
           </section>
 
@@ -205,11 +233,23 @@
               <p class="eyebrow">Team Feed</p>
               <h2>Recent Work</h2>
               <p>See when teammates log a workout and send a quick thumbs-up.</p>
+              <span id="syncStatus" class="sync-status">Device-only preview</span>
             </div>
             <div class="team-stat">
               <strong id="teamLogCount">0</strong>
               <span>logged workouts</span>
             </div>
+          </section>
+
+          <section id="teamStandingsPanel" class="panel hidden">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Yearly Points</p>
+                <h2>Team standings</h2>
+              </div>
+              <span class="badge">Year total</span>
+            </div>
+            <div id="teamPointsList" class="team-points-list"></div>
           </section>
 
           <section class="panel">
@@ -221,6 +261,96 @@
               <button id="clearTeamFeed" class="ghost-button danger" type="button">Clear feed</button>
             </div>
             <div id="teamFeed" class="team-feed"></div>
+          </section>
+        </section>
+
+        <section id="buddiesPage" class="page">
+          <section class="hero-panel team-hero">
+            <div>
+              <p class="eyebrow">Workout Buddies</p>
+              <h2>Find a teammate</h2>
+              <p>Post when and where you plan to work out so teammates can join.</p>
+            </div>
+            <div class="team-stat">
+              <strong id="buddyCount">0</strong>
+              <span>open plans</span>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Create Plan</p>
+                <h2>Buddy workout</h2>
+              </div>
+            </div>
+            <div class="buddy-form">
+              <label class="workout-select-field">
+                <span>Workout kind</span>
+                <select id="buddyWorkoutType"></select>
+              </label>
+              <label class="workout-select-field">
+                <span>Workout time</span>
+                <input id="buddyWorkoutTime" type="datetime-local">
+              </label>
+              <label class="workout-select-field">
+                <span>Meeting destination</span>
+                <input id="buddyDestination" type="text" placeholder="Rec center, barn, track...">
+              </label>
+              <label class="workout-select-field full-span">
+                <span>Optional note</span>
+                <textarea id="buddyNote" rows="3" placeholder="Pace, ride time, lift focus..."></textarea>
+              </label>
+              <button id="postBuddyWorkout" class="primary-action" type="button">Post buddy workout</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Join Plans</p>
+                <h2>Upcoming workouts</h2>
+              </div>
+            </div>
+            <div id="buddyList" class="buddy-list"></div>
+          </section>
+        </section>
+
+        <section id="coordinatorPage" class="page">
+          <section class="panel coordinator-panel">
+            <div class="section-head mini-head">
+              <div>
+                <p class="eyebrow">Admin Tools</p>
+                <h2>Fitness Coordinator</h2>
+              </div>
+              <span id="coordinatorBadge" class="badge">Admin</span>
+            </div>
+            <label class="admin-field">
+              <span>Transfer to signed-in account</span>
+              <select id="coordinatorAccountSelect"></select>
+            </label>
+            <button id="transferCoordinator" class="ghost-button" type="button">Transfer role</button>
+            <label class="admin-field">
+              <span>Announcement</span>
+              <textarea id="announcementText" rows="4" placeholder="Workout scheduling, events, reminders..."></textarea>
+            </label>
+            <button id="sendAnnouncement" class="primary-action" type="button">Post announcement</button>
+            <label class="admin-field">
+              <span>Edit workout</span>
+              <select id="adminWorkoutSelect"></select>
+            </label>
+            <div id="exerciseEditor" class="exercise-editor"></div>
+            <button id="saveExercises" class="primary-action" type="button">Save exercises</button>
+            <div class="admin-divider"></div>
+            <div>
+              <p class="eyebrow">Demo Images</p>
+              <h3 class="admin-subhead">Movement cards</h3>
+            </div>
+            <div id="demoImageEditor" class="demo-image-editor"></div>
+            <div class="coordinator-actions">
+              <button id="exportTeamCsv" class="ghost-button" type="button">Export Team Logs</button>
+              <button id="resetPoints" class="ghost-button danger" type="button">Reset yearly points</button>
+            </div>
           </section>
         </section>
       </main>
@@ -237,9 +367,17 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9H3v6h2v3h4V6H5Zm14 0V6h-4v12h4v-3h2V9Zm-8-1h2v8h-2Z"/></svg>
           <span>Track</span>
         </button>
+        <button class="nav-button" data-page="buddies" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 11.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm9 0a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM2.5 20c.4-3.5 2.3-5.7 5-5.7s4.6 2.2 5 5.7Zm9 0c.4-3.5 2.3-5.7 5-5.7s4.6 2.2 5 5.7Z"/></svg>
+          <span>Buddies</span>
+        </button>
         <button class="nav-button" data-page="team" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm8.5 1a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM2 21c.4-4.2 2.7-7 6-7s5.6 2.8 6 7Zm11.4 0c-.2-1.9-.9-3.6-2-5 1-.8 2.3-1.2 3.8-1.2 3 0 5.1 2.4 5.5 6.2Z"/></svg>
           <span>Team</span>
+        </button>
+        <button id="coordinatorNavButton" class="nav-button hidden" data-page="coordinator" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5Zm1 14h-2v-2h2Zm0-4h-2V7h2Z"/></svg>
+          <span>Coach</span>
         </button>
       </nav>
       <div id="celebration" class="celebration hidden" role="status" aria-live="polite">Gig 'em! Workout logged.</div>
@@ -255,7 +393,7 @@
           </div>
           <button id="closeSignIn" class="icon-button" type="button" aria-label="Close sign in">x</button>
         </div>
-        <p class="sheet-copy">Use your Google email to save workout logs, badges, photos, and team activity to your rider profile on this device.</p>
+        <p class="sheet-copy">Use your Google email to save workout logs, points, descriptions, and team activity to your rider profile on this device.</p>
         <label class="admin-field">
           <span>Google email</span>
           <input id="previewEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@gmail.com">
