@@ -1,6 +1,18 @@
 const GOOGLE_CLIENT_ID = "";
-const TEAM_SYNC_URL = "[https://ihsa-fitness-app-default-rtdb.firebaseio.com/](https://ihsa-fitness-app-default-rtdb.firebaseio.com)";
+const TEAM_SYNC_URL = "https://ihsa-fitness-app-default-rtdb.firebaseio.com";
+const TEAM_SYNC_ID = "aggie-ihsa";
 const SYNC_POLL_MS = 15000;
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC6Yc6dIIYA5aTnEyU-6IjlMNSibmlSNiE",
+  authDomain: "ihsa-fitness-app.firebaseapp.com",
+  databaseURL: "https://ihsa-fitness-app-default-rtdb.firebaseio.com",
+  projectId: "ihsa-fitness-app",
+  storageBucket: "ihsa-fitness-app.firebasestorage.app",
+  messagingSenderId: "718264416647",
+  appId: "1:718264416647:web:ca6a667e4c7c07c55b7b22",
+  measurementId: "G-E7KRBMQLR0"
+};
+const FCM_VAPID_KEY = "BFzJFSrHYZn95aTPyzaU87MygtFvZ9N3w-cKIkxfRl5tK4DKaePMBhGHB3791aq46o2wpvLUwR8qVnNqXxm3bxQ";
 const DEFAULT_COORDINATOR_EMAIL = "ldenker2006@gmail.com";
 const WORKOUT_TYPES = ["Strength A", "Endurance", "Power", "Mobility", "Strength B"];
 
@@ -128,6 +140,7 @@ let startingRanges = { ...defaultStartingRanges, ...(JSON.parse(localStorage.get
 let demoImages = JSON.parse(localStorage.getItem(DEMO_IMAGES_KEY) || "{}");
 let syncTimer = 0;
 let syncStatus = TEAM_SYNC_URL ? "Connecting team sync..." : "Device-only preview";
+let firebaseMessaging = null;
 let trackerTimer = JSON.parse(localStorage.getItem(TRACKER_TIMER_KEY) || "null") || { running: false, startedAt: "", elapsedSeconds: 0 };
 let trackerTimerInterval = 0;
 let locationWatchId = null;
@@ -154,6 +167,8 @@ const els = {
   accountEmail: document.querySelector("#accountEmail"),
   accountBadgeList: document.querySelector("#accountBadgeList"),
   accountPhotoInput: document.querySelector("#accountPhotoInput"),
+  enableNotifications: document.querySelector("#enableNotifications"),
+  notificationStatus: document.querySelector("#notificationStatus"),
   accountNotifications: document.querySelector("#accountNotifications"),
   logOutButton: document.querySelector("#logOutButton"),
   signInSheet: document.querySelector("#signInSheet"),
@@ -243,6 +258,7 @@ document.querySelectorAll("[data-jump]").forEach((button) => {
 els.signInButton.addEventListener("click", signInWithGoogle);
 els.logOutButton.addEventListener("click", logOut);
 els.accountPhotoInput.addEventListener("change", updateAccountPhoto);
+els.enableNotifications.addEventListener("click", enableBrowserNotifications);
 els.accountMenu.addEventListener("toggle", markAccountNotificationsRead);
 els.closeSignIn.addEventListener("click", closeSignInSheet);
 els.previewSignIn.addEventListener("click", signInFromPreviewForm);
@@ -1850,6 +1866,58 @@ function relativeTime(isoDate) {
   return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
 }
 
+function updateNotificationStatus(message) {
+  if (els.notificationStatus) els.notificationStatus.textContent = message;
+}
+
+async function initializeFirebaseMessaging() {
+  if (!window.firebase || !("serviceWorker" in navigator) || !("Notification" in window)) {
+    updateNotificationStatus("Browser notifications are not supported on this device.");
+    return;
+  }
+
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseMessaging = firebase.messaging();
+    firebaseMessaging.onMessage((payload) => {
+      const notice = payload.notification || {};
+      updateNotificationStatus(notice.title ? `New notification: ${notice.title}` : "New notification received.");
+    });
+    updateNotificationStatus(Notification.permission === "granted" ? "Notifications are enabled on this device." : "Notifications are off on this device.");
+  } catch (error) {
+    console.error("Firebase Messaging setup failed", error);
+    updateNotificationStatus("Notifications need Firebase setup to finish.");
+  }
+}
+
+async function enableBrowserNotifications() {
+  if (!firebaseMessaging) {
+    updateNotificationStatus("Notifications are still loading. Try again in a moment.");
+    return;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      updateNotificationStatus("Notifications were not enabled. You can change this in your browser settings.");
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    const token = await firebaseMessaging.getToken({
+      vapidKey: FCM_VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
+    if (!token) throw new Error("Firebase did not return a notification token.");
+
+    localStorage.setItem("ihsa-fitness-fcm-token", token);
+    updateNotificationStatus("Notifications are enabled on this device.");
+  } catch (error) {
+    console.error("Could not enable notifications", error);
+    updateNotificationStatus("Could not enable notifications. Check browser permissions and try again.");
+  }
+}
+
 render();
 startTrackerTimerLoop();
 window.setInterval(() => {
@@ -1857,3 +1925,4 @@ window.setInterval(() => {
   renderProfile();
 }, 60000);
 initializeSharedSync();
+initializeFirebaseMessaging();
